@@ -1,0 +1,26 @@
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\bin\Debug\KCBackup.exe.config
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\bin\Debug\KCBackup.exe
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\bin\Debug\KCBackup.pdb
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.csprojAssemblyReference.cache
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.Properties.Resources.resources
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.csproj.GenerateResource.cache
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.csproj.CoreCompileInputs.cache
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.exe
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.pdb
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.frmRestoreSelect.resources
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.frmKillBrowser.resources
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.FormBackup.resources
+C:\Users\Kirby's Computers\Documents\Visual Studio 2019\Projects\KCBackup\obj\Debug\KCBackup.FormBackupRestore.resources
+C:\Users\Alex\source\repos\KCBackup\bin\Debug\KCBackup.exe.config
+C:\Users\Alex\source\repos\KCBackup\bin\Debug\KCBackup.exe
+C:\Users\Alex\source\repos\KCBackup\bin\Debug\KCBackup.pdb
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.csprojAssemblyReference.cache
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.FormBackup.resources
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.FormBackupRestore.resources
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.Properties.Resources.resources
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.frmRestoreSelect.resources
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.csproj.GenerateResource.cache
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.csproj.CoreCompileInputs.cache
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.exe
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.pdb
+C:\Users\Alex\source\repos\KCBackup\obj\Debug\KCBackup.frmKillProcess.resources
