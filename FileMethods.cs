@@ -148,7 +148,9 @@ namespace KCBackup
             return true;
         }
         /**
-         * takes a file and renames it to filename-oldXXXX where XXXX is the number of old copies, I.E 0001 and 0002
+         * takes a file and renames it to filename-oldXXXX where XXXX is presumably the number of old copies, I.E 0001 and 0002.
+         * If some old copies have been deleted, the file being passed in will still be renamed with a number one larger than
+         * highest numbered copy.
          */
         public static string fileRename(string path)
         {
@@ -156,38 +158,45 @@ namespace KCBackup
             if(File.Exists(path))
             {
                 string directory = Path.GetDirectoryName(path);
+                string extension = Path.GetExtension(path);
                 string highestFileCopy = null;
                 foreach(string file in Directory.GetFiles(directory))
                 {
-                    if(file.StartsWith(path.Substring(0, path.Length -4) + "-old("))
+                    //if the filename without the extention is the same as the current filename with "-old(" at the end and the file being observed
+                    //has the same extension as the file passed in
+                    if((file.StartsWith(path.Substring(0, path.Length - extension.Length) + "-old(")) && Path.GetExtension(file) == extension)
                     {
                         //since the array will be ordered, we only need to keep track of the most recently gotten file
                         highestFileCopy = file;
                     }
                 }
+                //if there are no already existing old versions of the file in this directory
                 if(highestFileCopy == null)
                 {
-                    newLocation = path.Substring(0, path.Length - 4);
-                    newLocation += "-old(0001)" + path.Substring(path.Length - 4);
+                    newLocation = path.Substring(0, path.Length - extension.Length);
+                    newLocation += "-old(0001)" + extension;
                     File.Move(path, newLocation);
                 }
                 else
                 {
-                    string temp = highestFileCopy.Substring(path.Length - 4);
-                    temp = temp.Substring(5, 4);
+                    //temp is set to the 4 numbers after -old in the highestFileCopy. This is decided by taking the original paths length and then
+                    //subtracting the extension length. This will give us an index of the start of "-old(XXXX).X" in the highestFileCopy. From there
+                    //we add 5 to that index making the start of substring the start of the 4 numbers and then we copy for indicies to temp.
+                    string temp = highestFileCopy.Substring(path.Length - extension.Length + 5, 4);
+                    //temp = temp.Substring(5, 4);
                     int currentNumber = Int32.Parse(temp);
                     currentNumber++;
-                    string asString = currentNumber.ToString();
-                    if(asString.Length > 5)
+                    string numberAsString = currentNumber.ToString();
+                    if(numberAsString.Length > 5)
                     {
                         return null;
                     }
-                    for(int i = asString.Length; i < 4; i++)
+                    for(int i = numberAsString.Length; i < 4; i++)
                     {
-                        asString = '0' + asString;
+                        numberAsString = '0' + numberAsString;
                     }
-                    newLocation = path.Substring(0, path.Length - 4);
-                    newLocation += "-old(" + asString + ")" + path.Substring(path.Length - 4);
+                    newLocation = path.Substring(0, path.Length - extension.Length);
+                    newLocation += "-old(" + numberAsString + ")" + extension;
                     File.Move(path, newLocation);
                 }
                 return newLocation;
