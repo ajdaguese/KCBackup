@@ -34,7 +34,9 @@ namespace KCBackup
 
             #endregion Initialization by mode
         }
-
+        /**
+         * brings up a browse screen to browse for a backup location folder
+         */
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             //IF run in Backup mode
@@ -63,7 +65,9 @@ namespace KCBackup
             }
 
         }
-
+        /**
+         * confirms the location chosen from browse
+         */
         private void btnOK_Click(object sender, EventArgs e)
         {
             //Change DialogResult and close
@@ -71,7 +75,9 @@ namespace KCBackup
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-
+        /**
+         * cancels the backup or restore operation and closes this form
+         */
         private void btnCancel_Click(object sender, EventArgs e)
         {
             //DialogResult already set, just close

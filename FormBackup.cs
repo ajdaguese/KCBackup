@@ -417,7 +417,11 @@ namespace KCBackup
             lblBackupNotice.Text = "";
             reset();
         }
-
+        /**
+         * Runs a backup of the checked programs on the form as well as all the folders in the extra folders list.
+         * backs the files up to a directory backupXXXX in the chosen backup location where the Xs are a number
+         * representing the number of the backup
+         */
         private void backup()
         {
             //disable the controls so that nothing can be changed or repeated during runtime
@@ -554,7 +558,9 @@ namespace KCBackup
             //reset program to start state
             reset();
         }
-        //changes the Restore Only backup location in the indicator file
+        /**
+         * changes the Restore Only backup location in the indicator file
+         */
         private void changeIndicatorROBackup(string [] lines, int restoreOnlyIndex)
         {
             bool foundRestoreOnlyFolder = false;
@@ -574,7 +580,9 @@ namespace KCBackup
                 lines[restoreOnlyIndex] += ("\nRESTOREONLYFOLDER=" + currentBackup);
             }
         }
-
+        /**
+         * adds all the extra directories in the user folder to the displayed list on the form
+         */
         private void checkExtraUserFolders()//List<BackupLocation> backupList)
         {
             List<string> commonFolders = new List<string>();
@@ -629,7 +637,9 @@ namespace KCBackup
             }
             extraUserFoldersEndIndex = lstCustom.Items.Count;
         }
-
+        /**
+         * Restores the checked and listed options on the form to the location specified in the configuration file
+         */
         private void restore()
         {
             setButtonState(false);
@@ -653,7 +663,9 @@ namespace KCBackup
                 this.Close();
             }
         }
-
+        /**
+         * constructs the list of BackupLocation objects to be either backed up or restored
+         */
         private List<BackupLocation> constructList()
         {
             List<BackupLocation> backupList = new List<BackupLocation>();
@@ -694,16 +706,12 @@ namespace KCBackup
             //I have to use i = i because the first part of a for loop must have an assignment
             for(i = i; i < lstCustom.Items.Count; i++)
             {
-
                 backupList.Add(new StrayFolder(extraFolderNames[i], lstCustom.Items[i].ToString(), true));
             }
             return backupList;
         }
         /**
-         * refines the list for the restore by searching the configuration file and adding
-         * any BackupLocation whose name is in front of a '+' in the configuration file to
-         * the refined list. Also adds custom saved files found in the configuration file
-         * to the list
+         * Reads the configuration file and limits the users restore options to only directories that are in the current backup
          */
         private void readConfig()
         {
@@ -839,6 +847,9 @@ namespace KCBackup
                 }
             }
         }
+        /**
+         * sets all buttons to the bool state
+         */
         private void setButtonState(bool state)
         {
             btnLoadRestore.Enabled = state;
@@ -851,7 +862,9 @@ namespace KCBackup
             btnRemoveAll.Enabled = state;
             btnRefresh.Enabled = state;
         }
-
+        /**
+         * sets all checkboxes to the bool state
+         */
         private void setCheckBoxState(bool state)
         {
             
@@ -891,6 +904,9 @@ namespace KCBackup
             chkChrome.Checked = state;
         }
 
+        /** 
+         * on a load check if this run of the program is in 'restore only' mode and sets variables accordingly
+         */
         private void FormBackup_Load(object sender, EventArgs e)
         {
             bool restoreOnly = false;

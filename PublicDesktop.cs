@@ -7,12 +7,23 @@ using System.Threading.Tasks;
 
 namespace KCBackup
 {
+    /**
+     * the PublicDesktop class restores anything from the public desktop directory to the a directory "OldDesktop\PublicDesktop"
+     * on the desktop of the user running this program
+     */
     class PublicDesktop : PublicUserFiles
     {
+        /**
+         * constructs a PublicDesktop object and sets the type enum
+         */
         public PublicDesktop(string pName, string pDir, bool pChecked) : base(pName, pDir, pChecked)
         {
             type = BackupType.publicdesktop;
         }
+        /**
+         * restores the files that were on the public desktop to the directory "OldDesktop\PublicDesktop" on the desktop of the 
+         * user running this program
+         */
         public override void restore(string backupLoc)
         {
             //adding a folder ot the public desktop requires administrator privelages, so I just copy the 

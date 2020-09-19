@@ -10,53 +10,33 @@ using System.Threading;
 
 namespace KCBackup
 {
+    /**
+     * a class for the backing up and restoring of Firefox user data. This class extends ProgramFiles because firefox needs to be closed
+     * before backing up or restoring
+     */
     class FirefoxLocation : ProgramFiles
     {
+        //the path to the folder that contains the "profiles.ini" file
         string profileiniPath;
         //the name of the profiles file and what we will rename the currently existing profiles file to on a new install of firefox
         string profiles = "\\profiles.ini";
+        /**
+         * constructs a FirefoxLocation object, sets the type enum to firefox
+         */
         public FirefoxLocation(string pName, string pDir, Boolean pChecked, string processName) : base(pName, pDir, pChecked, processName)
         {
             type = BackupType.firefox;
             //Path to the profiles.ini file which will also need backed up and restored
             profileiniPath = base.pathTranslate("%AppDataRoaming%\\Mozilla\\Firefox");
         }
+        /**
+         * runs the parent backup method backing up to the backupLocation\Firefox\Profiles and also copies
+         * the profiles.ini file to the backup location
+         */
         public override void backup(string dest)
         {
             if (canUse && bolChecked)
             {
-                /*Process[] processes = Process.GetProcessesByName("Firefox");
-                while (processes.Length > 0)
-                {
-                    new frmKillBrowser("firefox").ShowDialog();
-                    if (frmKillBrowser.response == btnResponse.ok)
-                    {
-                        //do nothing, if the browser is actually closed the loop should break, if not display message again
-                    }
-                    else if (frmKillBrowser.response == btnResponse.fStop)
-                    {
-                        foreach (Process p in processes)
-                        {
-                            try
-                            {
-                                p.Kill();
-                            }
-                            catch (Exception e)
-                            {
-                                //Likely only caught trying to kill a process that was automatically killed when another died
-                            }
-                        }
-                        //sleeps for half a second giving the proccesses time to close
-                        Thread.Sleep(500);
-                    }
-                    else if (frmKillBrowser.response == btnResponse.cancel)
-                    {
-                        //we set canUse to false, otherwise it will try to write to the configuration file
-                        canUse = false;
-                        return;
-                    }
-                    processes = Process.GetProcessesByName("Firefox");
-                }*/
                 base.backup(dest + "\\Firefox\\Profiles");
                 if (Directory.Exists(dest + "\\Firefox"))
                 {
@@ -64,6 +44,10 @@ namespace KCBackup
                 }
             }
         }
+        /**
+         * calls the parent method to restore the firefox profile directories and restores the profiles.ini class
+         * and replaces its hash with the hash for the existing profiles.ini
+         */
         public override void restore(string backupLoc)
         {
             if (canUse && bolChecked)
@@ -122,45 +106,6 @@ namespace KCBackup
                         }
                         File.WriteAllLines(profileiniPath + profiles, arrLine);
                         base.restore(Path.Combine(backupLoc, "Firefox\\Profiles"));
-                        /*string[] directoryNames = Directory.GetDirectories(backupLoc + "\\Firefox\\Profiles");
-                        FileMethods.convertPathToFolder(directoryNames);
-                        //change the profile names before backing up so the regular use of firefox is not impeded until backup is done
-                        foreach (string dir in directoryNames)
-                        {
-                            Directory.Move(backupLoc + "\\Firefox\\Profiles" + dir, backupLoc + "\\Firefox\\Profiles" + dir + "KCRESTORE");
-                        }
-                        base.restore(backupLoc + "\\Firefox");
-                        //restore the folder names in the backup
-                        foreach (string dir in directoryNames)
-                        {
-                            Directory.Move(backupLoc + "\\Firefox\\Profiles" + dir + "KCRESTORE", backupLoc + "\\Firefox\\Profiles" + dir);
-                        }
-                        Process[] processes = Process.GetProcessesByName("Firefox");
-                        while (processes.Length > 0)
-                        {
-                            DialogResult dialogResult = MessageBox.Show("Firefox must be closed to complete the restore, would you like the program to do this for you? Close firefox before selecting no", "close firefox", MessageBoxButtons.YesNo);
-                            if (dialogResult == DialogResult.Yes)
-                            {
-                                foreach (Process p in processes)
-                                {
-                                    p.Kill();
-                                    Thread.Sleep(500);
-                                }
-                            }
-                            else if (dialogResult == DialogResult.No)
-                            {
-                                //as above, do nothing and if the user actually closed their browser the loop will break
-                            }
-                            processes = Process.GetProcessesByName("Firefox");
-                        }
-                        FileMethods.CheckDirectoryNames(backupLoc + "\\Firefox\\Profiles", realDirectory);
-                        //Finally, rename the newly restored folders to their original name
-                        foreach (string dir in directoryNames)
-                        {
-                            Directory.Move(realDirectory + dir + "KCRESTORE", realDirectory + dir);
-                        }*/
-                        //to avoid copying the profiles.ini a second time in the main copy method, it gets moved. After everything else copies
-                        //we copy the profile.ini back into the backup
                         File.Copy(profileiniPath + profiles, backupLoc + "\\Firefox" + profiles);
                     }
                     catch(Exception e)
@@ -185,6 +130,9 @@ namespace KCBackup
                 }
             }
         }
+        /**
+         * gets the version of firefox currently running on this computer and adds it to the configuration writes variable
+         */
         public override void specialActions()
         {
             if (canUse && bolChecked)
@@ -201,7 +149,10 @@ namespace KCBackup
                 }
             }
         }
-
+        /**
+         * gets the firefox version by looking for it in the application.ini file in both the x86 and x64 version of firefox
+         * if both x86 and x64 firefox are installed, then this method returns the more recent version number as a string
+         */
         private string getFirefoxVersion()
         {
             string x86Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);

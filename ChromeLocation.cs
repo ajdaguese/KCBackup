@@ -12,10 +12,17 @@ namespace KCBackup
 {
     class ChromeLocation : ProgramFiles
     {
+        /**
+         * constructs a new ChromeLocation object and sets its type enum to chrome
+         */
         public ChromeLocation(string pName, string pDir, Boolean pChecked, string processName) : base(pName, pDir, pChecked, processName)
         {
             type = BackupType.chrome;
         }
+        /**
+         * gets the verison number of chrome and adds it to the extraConfigWrites variable which will cause chromes version to be noted
+         * in the configuration file
+         */
         public override void specialActions()
         {
             if (canUse && bolChecked)
@@ -32,7 +39,9 @@ namespace KCBackup
                 }
             }
         }
-
+        /**
+         * calls the parent backup method, backing up a folder called "Chrome" in the given destination
+         */
         public override void backup(string dest)
         {
             if (canUse && bolChecked)
@@ -40,6 +49,9 @@ namespace KCBackup
                 base.backup(dest + "\\Chrome");
             }
         }
+        /**
+         * restores files from the "Chrome" foldedr in the backup location to the chrome directory
+         */
         public override void restore(string backupLoc)
         {
             if (canUse && bolChecked)
@@ -47,6 +59,9 @@ namespace KCBackup
                 base.restore(Path.Combine(backupLoc, "Chrome"));
             }
         }
+        /**
+         * returns the most recent version of chrome used on the running computer
+         */
         private string getChromeVersion()
         {
             string x86Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);

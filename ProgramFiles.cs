@@ -10,17 +10,25 @@ using System.Windows.Forms;
 
 namespace KCBackup
 {
+    /**
+     * A class for program files that need backed up. When backing up or restoring these files, the user will be asked to close the program
+     */
     class ProgramFiles : BackupLocation
     {
         //the name of the process to search for and end
         private string processName;
+        /**
+         * constructs a ProgramFiles object, sets the type enum and adds the processname to the configuration file write variable
+         */
         public ProgramFiles (string pName, string pDir, Boolean pChecked, string processName) : base(pName, pDir, pChecked)
         {
             type = BackupType.programfiles;
             this.processName = processName;
             extraConfigWrites += "-PROCESSNAME=" + processName + "\n";
         }
-
+        /**
+         * backs up the program files after ensuring that the program is closed
+         */
         public override void backup(string dest)
         {
             if (canUse && bolChecked)
@@ -61,6 +69,9 @@ namespace KCBackup
 
             base.backup(dest);
         }
+        /**
+         * restores the program files after ensuring the program is closed
+         */
         public override void restore(string backupLoc)
         {
             string[] directoryNames = Directory.GetDirectories(backupLoc);

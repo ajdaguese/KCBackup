@@ -25,7 +25,10 @@ namespace KCBackup
             callingForm = calling;
             currentlySelected = "";
         }
-
+        /**
+         * when the form loads, populates the combobox with all the backups in the current parent backup directory,
+         * starts the selection at the most recent backup
+         */
         private void RestoreSelect_Load(object sender, EventArgs e)
         {
             string[] backups = Directory.GetDirectories(root);
@@ -50,13 +53,18 @@ namespace KCBackup
                 this.Close();
             }
         }
-
+        /**
+         * when the index is changed, switch the currently selected path string and displays the date and time the newly selected backup
+         * was created
+         */
         private void cmbSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
             currentlySelected = cmbSelect.GetItemText(cmbSelect.Items[cmbSelect.SelectedIndex]);
             lblDate.Text = Directory.GetCreationTime(Path.Combine(root, currentlySelected)).ToString("MM-dd-yyyy hh:mmtt");
         }
-
+        /**
+         * confirms the backup selection displayed in the combobox
+         */
         private void btnOk_Click(object sender, EventArgs e)
         {
             this.Hide();

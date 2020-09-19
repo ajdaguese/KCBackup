@@ -37,9 +37,10 @@
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(13, 221);
+            this.btnOk.Location = new System.Drawing.Point(20, 340);
+            this.btnOk.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
+            this.btnOk.Size = new System.Drawing.Size(112, 35);
             this.btnOk.TabIndex = 0;
             this.btnOk.Text = "ok";
             this.btnOk.UseVisualStyleBackColor = true;
@@ -47,17 +48,19 @@
             // 
             // lblText
             // 
-            this.lblText.Location = new System.Drawing.Point(12, 9);
+            this.lblText.Location = new System.Drawing.Point(18, 14);
+            this.lblText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblText.Name = "lblText";
-            this.lblText.Size = new System.Drawing.Size(427, 180);
+            this.lblText.Size = new System.Drawing.Size(640, 277);
             this.lblText.TabIndex = 1;
             this.lblText.Text = resources.GetString("lblText.Text");
             // 
             // btnFStop
             // 
-            this.btnFStop.Location = new System.Drawing.Point(187, 221);
+            this.btnFStop.Location = new System.Drawing.Point(280, 340);
+            this.btnFStop.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnFStop.Name = "btnFStop";
-            this.btnFStop.Size = new System.Drawing.Size(75, 23);
+            this.btnFStop.Size = new System.Drawing.Size(112, 35);
             this.btnFStop.TabIndex = 2;
             this.btnFStop.Text = "Force Stop";
             this.btnFStop.UseVisualStyleBackColor = true;
@@ -65,24 +68,26 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(364, 221);
+            this.btnCancel.Location = new System.Drawing.Point(546, 340);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(112, 35);
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // frmKillBrowser
+            // frmKillProcess
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(465, 256);
+            this.ClientSize = new System.Drawing.Size(698, 394);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnFStop);
             this.Controls.Add(this.lblText);
             this.Controls.Add(this.btnOk);
-            this.Name = "frmKillBrowser";
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.Name = "frmKillProcess";
             this.Text = "frmKillBrowser";
             this.Load += new System.EventHandler(this.frmKillBrowser_Load);
             this.ResumeLayout(false);

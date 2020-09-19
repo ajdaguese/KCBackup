@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblText.Text" xml:space="preserve">
-    <value>To Continue You Must Close [browser].  Please close [browser] and then click "ok" or if you would [browser] to be closed for you, click force stop (may cause complications). If you click cancel, [browser] files will not be backed up. Do not open [browser] again until the backup is complete.</value>
+    <value>To Continue You Must Close [program].  Please close [program] and then click "ok" or if you would [program] to be closed for you, click force stop (may cause complications). If you click cancel, [program] files will not be backed up. Do not open [program] again until the backup is complete.</value>
   </data>
 </root>
