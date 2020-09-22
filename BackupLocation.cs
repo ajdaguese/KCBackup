@@ -175,7 +175,7 @@ namespace KCBackup
         {
             if (canUse && bolChecked)
             {
-                copy(dest, realDirectory, false);
+                copy(dest, realDirectory, false, false);
                 if(!copiedFiles && Directory.Exists(dest))
                 {
                     Directory.Delete(dest, true);
@@ -188,14 +188,27 @@ namespace KCBackup
         public virtual void restore(string backupLoc)
         {
             //string[] separated = realDirectory.Split('\\');
-            copy(realDirectory, backupLoc, true);
+            copy(realDirectory, backupLoc, true, false);
         }
-
         /**
-         * copies all of the files in a directory and every subdirectory to a separate location
+         * <summary>
+         * Gets the size in bytes of the directory associated with this object
+         * </summary>
          */
-        private void copy(string tempDest, string tempSource, bool restore)
+        public long getSize()
         {
+            //the destination does not matter because copy will not actually copy when getting size
+            return copy("", realDirectory, false, true);
+        }
+        /**
+         * <summary>
+         * copies all of the files in a directory and every subdirectory to a separate location, also used to get the size
+         * of a directory if gettingSize is set to true
+         * </summary>
+         */
+        private long copy(string tempDest, string tempSource, bool restore, bool gettingSize)
+        {
+            long size = 0;
             string dest;
             if (!tempDest.StartsWith(@"\\?\"))
             {
@@ -217,7 +230,7 @@ namespace KCBackup
             string logfile = FormBackup.backupRoot + "\\log.txt";//Changed broken "frmBackup" to "FormBackup"
             if (!(File.Exists(logfile)))
             {
-                if (!Directory.Exists(FormBackup.backupRoot))//Changed broken "frmBackup" to "FormBackup"
+                if (!Directory.Exists(FormBackup.backupRoot) && !gettingSize)//Changed broken "frmBackup" to "FormBackup"
                 {
                     Directory.CreateDirectory(FormBackup.backupRoot);//Changed broken "frmBackup" to "FormBackup"
                 }
@@ -241,11 +254,11 @@ namespace KCBackup
                             {
 
                                 string dirName = Path.GetFileName(dir);
-                                if (!Directory.Exists(Path.Combine(dest, dirName)))
+                                if (!Directory.Exists(Path.Combine(dest, dirName)) && !gettingSize)
                                 {
                                     Directory.CreateDirectory(Path.Combine(dest, dirName));
                                 }
-                                copy(Path.Combine(dest, dirName), dir, restore);
+                                size += copy(Path.Combine(dest, dirName), dir, restore, gettingSize);
                             }
                         }
                         catch (Exception e)
@@ -277,7 +290,7 @@ namespace KCBackup
                             {
                                 //Not checking for directory causes a problem when back up a directory with no sub-directories
                                 //in which the backup destination direcory does not exist and can't be copied to.
-                                if (!Directory.Exists(dest))
+                                if (!Directory.Exists(dest) && !gettingSize)
                                 {
                                     Directory.CreateDirectory(dest);
                                 }
@@ -295,6 +308,11 @@ namespace KCBackup
                                     {
                                         File.Copy(file, Path.Combine(dest, Path.GetFileName(file)));
                                     }
+                                }
+                                else if(gettingSize)
+                                {
+                                    FileInfo fi = new FileInfo(Directory.GetFiles(source)[i]);
+                                    size += fi.Length;
                                 }
                                 else
                                 {
@@ -327,6 +345,7 @@ namespace KCBackup
             {
                 MessageBox.Show("Could not back up folder " + name);
             }
+            return size;
         }
         /**
          * Taken from https://stackoverflow.com/questions/10667012/getting-downloads-folder-in-c and modified/hardcoded to only work with the downloads

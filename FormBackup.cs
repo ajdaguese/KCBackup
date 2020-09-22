@@ -19,7 +19,7 @@ namespace KCBackup
 {
     public partial class FormBackup : Form
     {
-        public static string backupRoot = "..\\backups"; 
+        public static string backupRoot = "..\\backups";
         //the config file is a public static because some of the more specialized child classes (I.E firefox) need access to it.
         public static readonly string restoreFile = "\\config.con";
         //this file is used to indicate a root backup directory
@@ -137,7 +137,7 @@ namespace KCBackup
                 //txtLocation.Text = frmBackupRestore.strReturnValue;
 
                 backupRoot = txtLocation.Text;
-                
+
                 frmRestoreSelect sel = new frmRestoreSelect(backupRoot, this);
                 sel.ShowDialog();
                 if (frmRestoreSelect.currentlySelected == null)
@@ -190,11 +190,11 @@ namespace KCBackup
             lstCustom.Items.RemoveAt(lstCustom.SelectedIndex);
             //if the selected index is less than the end index for the extra user files,
             //one will be delted so the end index must be less
-            if(lstCustom.SelectedIndex < extraUserFoldersEndIndex)
+            if (lstCustom.SelectedIndex < extraUserFoldersEndIndex)
             {
                 extraUserFoldersEndIndex--;
             }
-            if(lstCustom.Items.Count < 1)
+            if (lstCustom.Items.Count < 1)
             {
                 btnRemoveAll.Enabled = false;
             }
@@ -215,7 +215,7 @@ namespace KCBackup
             {
                 checkExtraUserFolders();
             }
-            else if(lblMode.Text == "RESTORE")
+            else if (lblMode.Text == "RESTORE")
             {
                 readConfig();
             }
@@ -403,14 +403,14 @@ namespace KCBackup
         private void btnStartProcess_Click(object sender, EventArgs e)
         {
             //Set current backup/restore location
-       //     
+            //     
             lblBackupNotice.Text = "Backing up/Restoring! Please wait!";
             lblBackupNotice.Refresh();
             if (lblMode.Text == "BACKUP")
             {
                 backup();
             }
-            else if(lblMode.Text == "RESTORE")
+            else if (lblMode.Text == "RESTORE")
             {
                 restore();
             }
@@ -463,18 +463,18 @@ namespace KCBackup
             //a boolean indicating if the current restore file has the readonly variable set
             bool foundReadOnly = false;
             string[] arrLine = File.ReadAllLines(Path.Combine(backupRoot, indicatorFile));
-            for(int i = 0; i < arrLine.Length; i++)
+            for (int i = 0; i < arrLine.Length; i++)
             {
                 string[] splitLine = arrLine[i].Split('=');
-                if(splitLine[0] == "RESTOREONLY")
+                if (splitLine[0] == "RESTOREONLY")
                 {
                     foundReadOnly = true;
-                    if(splitLine[1] == "TRUE")
+                    if (splitLine[1] == "TRUE")
                     {
-                        if(chkRestoreOnly.Checked)
+                        if (chkRestoreOnly.Checked)
                         {
                             DialogResult dialogResult = MessageBox.Show("This backup directory is already set to restore only. If you continue, the program will automatically restore the backup you are trying to create now when opened in restore only mode, and not the already created backup. Would you like to continue?", "Continue backup?", MessageBoxButtons.YesNo);
-                            if(dialogResult == DialogResult.Yes)
+                            if (dialogResult == DialogResult.Yes)
                             {
                                 changeIndicatorROBackup(arrLine, i);
                             }
@@ -487,12 +487,12 @@ namespace KCBackup
                         else
                         {
                             DialogResult dialogResult = MessageBox.Show("This backup location is set as restore only. Would you like to change this backup location to no longer be restore only? If you select no, a new backup will be made in this location, but the restore only mode will still restore the backup it is set to.", "Keep backup restore only?", MessageBoxButtons.YesNoCancel);
-                            if(dialogResult  == DialogResult.Yes)
+                            if (dialogResult == DialogResult.Yes)
                             {
                                 splitLine[1] = "FALSE";
                                 arrLine[i] = string.Join("=", splitLine);
                             }
-                            else if(dialogResult == DialogResult.Cancel)
+                            else if (dialogResult == DialogResult.Cancel)
                             {
                                 reset();
                                 return;
@@ -501,7 +501,7 @@ namespace KCBackup
                     }
                     else
                     {
-                        if(chkRestoreOnly.Checked)
+                        if (chkRestoreOnly.Checked)
                         {
                             splitLine[1] = "TRUE";
                             arrLine[i] = string.Join("=", splitLine);
@@ -513,7 +513,7 @@ namespace KCBackup
                     break;
                 }
             }
-            if(!foundReadOnly)
+            if (!foundReadOnly)
             {
                 FileStream fs = new FileStream(Path.Combine(backupRoot, indicatorFile), FileMode.Append);
                 byte[] configWrite;
@@ -531,37 +531,44 @@ namespace KCBackup
             }
 
             List<BackupLocation> backupList = constructList();
-            //runs the checkExtraUserFolders function, if it returns true the user chose to cancel,
-            //so we return the method after reenabling the buttons.
-            /* if (checkExtraUserFolders(backupList))
-             {
-                 setButtonState(true);
-                 return;
-             }*/
-             foreach (BackupLocation bl in backupList)
-             {
-                 bl.specialActions();
-                 //Must convert "backupRoot" from a relative path, otherwise adding "\\?\" later does not work
-                 bl.backup(Path.GetFullPath(backupRoot) + currentBackup);
-                 bl.writeToConfig(Path.GetFullPath(backupRoot) + currentBackup + restoreFile);
-             }
-             if(chkRestoreOnly.Checked)
+            long backupSize = 0;
+            foreach(BackupLocation bl in backupList)
             {
-                //if the exe already exists, delete it so you can replace it with the current exe
-                if(File.Exists(Path.Combine(backupRoot, "KCBackup.exe")))
-                {
-                    File.Delete(Path.Combine(backupRoot, "KCBackup.exe"));
-                }
-                File.Copy(".\\KCBackup.exe", Path.Combine(backupRoot, "KCBackup.exe"));
+                backupSize += bl.getSize();
             }
-            MessageBox.Show("BACKUP COMPLETE");
+            //creates a DriveInfo for the backup location's drive
+            DriveInfo di = new DriveInfo(Path.GetPathRoot(backupRoot));
+            if (backupSize <= di.AvailableFreeSpace)
+            {
+                foreach (BackupLocation bl in backupList)
+                {
+                    bl.specialActions();
+                    //Must convert "backupRoot" from a relative path, otherwise adding "\\?\" later does not work
+                    bl.backup(Path.GetFullPath(backupRoot) + currentBackup);
+                    bl.writeToConfig(Path.GetFullPath(backupRoot) + currentBackup + restoreFile);
+                }
+                if (chkRestoreOnly.Checked)
+                {
+                    //if the exe already exists, delete it so you can replace it with the current exe
+                    if (File.Exists(Path.Combine(backupRoot, "KCBackup.exe")))
+                    {
+                        File.Delete(Path.Combine(backupRoot, "KCBackup.exe"));
+                    }
+                    File.Copy(".\\KCBackup.exe", Path.Combine(backupRoot, "KCBackup.exe"));
+                }
+                MessageBox.Show("BACKUP COMPLETE");
+            }
+            else
+            {
+                MessageBox.Show("There is not enough free space on the selected drive to create this backup");
+            }
             //reset program to start state
             reset();
         }
         /**
          * changes the Restore Only backup location in the indicator file
          */
-        private void changeIndicatorROBackup(string [] lines, int restoreOnlyIndex)
+        private void changeIndicatorROBackup(string[] lines, int restoreOnlyIndex)
         {
             bool foundRestoreOnlyFolder = false;
             for (int j = 0; j < lines.Length; j++)
@@ -621,14 +628,14 @@ namespace KCBackup
                 if (!(commonFolders.Contains(split[split.Length - 1])) && !(split[split.Length - 1][0] == '.'))
                 {
                     bool shouldAdd = true;
-                    foreach(string s in lstCustom.Items)
+                    foreach (string s in lstCustom.Items)
                     {
-                        if(dir == s)
+                        if (dir == s)
                         {
                             shouldAdd = false;
                         }
                     }
-                    if(shouldAdd)
+                    if (shouldAdd)
                     {
                         lstCustom.Items.Add(dir);
                     }
@@ -643,7 +650,7 @@ namespace KCBackup
         private void restore()
         {
             setButtonState(false);
-            
+
             List<BackupLocation> restoreList = constructList();
             Console.WriteLine(restoreList.Count);
             if (restoreList == null)
@@ -658,7 +665,7 @@ namespace KCBackup
             }
             MessageBox.Show("Restore Complete");
             setButtonState(true);
-            if(restoreOnlyMode)
+            if (restoreOnlyMode)
             {
                 this.Close();
             }
@@ -669,19 +676,19 @@ namespace KCBackup
         private List<BackupLocation> constructList()
         {
             List<BackupLocation> backupList = new List<BackupLocation>();
-            backupList.Add(new Desktop("Desktop", "%desktop%",chkDesktop.Checked));
-            backupList.Add(new UserFiles("Documents", "%documents%",chkDocuments.Checked));
-            backupList.Add(new UserFiles("Downloads", "%downloads%",chkDownloads.Checked));
-            backupList.Add(new UserFiles("Favorites", "%favorites%",chkFavorites.Checked));
-            backupList.Add(new UserFiles("Music", "%music%",chkMusic.Checked));
-            backupList.Add(new UserFiles("Pictures", "%pictures%",chkPictures.Checked));
-            backupList.Add(new UserFiles("Videos", "%videos%",chkVideos.Checked));
-            backupList.Add(new PublicDesktop("PublicDesktop", "%publicdesktop%",chkCommonDesktop.Checked));
-            backupList.Add(new PublicUserFiles("PublicDocuments", "%publicdocuments%",chkCommonDocuments.Checked));
-            backupList.Add(new PublicUserFiles("PublicDownloads", "%publicdownloads%",chkCommonDownloads.Checked));
-            backupList.Add(new PublicUserFiles("PublicMusic", "%publicmusic%",chkCommonMusic.Checked));
-            backupList.Add(new PublicUserFiles("PublicPictures", "%publicpictures%",chkCommonPictures.Checked));
-            backupList.Add(new PublicUserFiles("PublicVideos", "%publicvideos%", (chkCommonVideos.Checked )));
+            backupList.Add(new Desktop("Desktop", "%desktop%", chkDesktop.Checked));
+            backupList.Add(new UserFiles("Documents", "%documents%", chkDocuments.Checked));
+            backupList.Add(new UserFiles("Downloads", "%downloads%", chkDownloads.Checked));
+            backupList.Add(new UserFiles("Favorites", "%favorites%", chkFavorites.Checked));
+            backupList.Add(new UserFiles("Music", "%music%", chkMusic.Checked));
+            backupList.Add(new UserFiles("Pictures", "%pictures%", chkPictures.Checked));
+            backupList.Add(new UserFiles("Videos", "%videos%", chkVideos.Checked));
+            backupList.Add(new PublicDesktop("PublicDesktop", "%publicdesktop%", chkCommonDesktop.Checked));
+            backupList.Add(new PublicUserFiles("PublicDocuments", "%publicdocuments%", chkCommonDocuments.Checked));
+            backupList.Add(new PublicUserFiles("PublicDownloads", "%publicdownloads%", chkCommonDownloads.Checked));
+            backupList.Add(new PublicUserFiles("PublicMusic", "%publicmusic%", chkCommonMusic.Checked));
+            backupList.Add(new PublicUserFiles("PublicPictures", "%publicpictures%", chkCommonPictures.Checked));
+            backupList.Add(new PublicUserFiles("PublicVideos", "%publicvideos%", (chkCommonVideos.Checked)));
             backupList.Add(new FirefoxLocation("Firefox", "%AppDataRoaming%\\Mozilla\\Firefox\\Profiles", chkFirefox.Checked, "Firefox"));
             backupList.Add(new ChromeLocation("Chrome", "%appdatalocal%\\Google\\Chrome", chkChrome.Checked, "Chrome"));
             int i = 0;
@@ -690,7 +697,7 @@ namespace KCBackup
             //and convert it to a string before storing it in the string array. After
             //that I just use my covertPathToFolder method to just get the folder name
             string[] extraFolderNames = new string[lstCustom.Items.Count];
-            for(i = 0; i < lstCustom.Items.Count; i++)
+            for (i = 0; i < lstCustom.Items.Count; i++)
             {
                 extraFolderNames[i] = lstCustom.Items[i].ToString();
             }
@@ -699,12 +706,12 @@ namespace KCBackup
             //reach the extraUserFoldersEndIndex which indicates the end of the ExtraUserFolders
             //and the beginning of the StrayFolders. Then continue through the rest of 
             //the list adding them as stray folders.
-            for(i = 0; i < extraUserFoldersEndIndex; i++)
+            for (i = 0; i < extraUserFoldersEndIndex; i++)
             {
                 backupList.Add(new ExtraUserFolders(extraFolderNames[i], lstCustom.Items[i].ToString(), true));
             }
             //I have to use i = i because the first part of a for loop must have an assignment
-            for(i = i; i < lstCustom.Items.Count; i++)
+            for (i = i; i < lstCustom.Items.Count; i++)
             {
                 backupList.Add(new StrayFolder(extraFolderNames[i], lstCustom.Items[i].ToString(), true));
             }
@@ -723,22 +730,22 @@ namespace KCBackup
             using (StreamReader file = new StreamReader(backupRoot + currentBackup + restoreFile))
             {
                 line = file.ReadLine();
-                if(line != null)
+                if (line != null)
                 {
                     name = line.Substring(1);
                 }
                 line = file.ReadLine();
-                while(line != null)
+                while (line != null)
                 {
-                    while(!line.StartsWith("+"))
+                    while (!line.StartsWith("+"))
                     {
                         string[] configSplit = line.Split('=');
-                        switch(configSplit[0])
+                        switch (configSplit[0])
                         {
                             case "-PROCESSNAME":
                                 //just in case something else in the variables had an '='
                                 //we join everything past the first part of the split with '='
-                                processName = string.Join("=", configSplit, 1, configSplit.Length-1);
+                                processName = string.Join("=", configSplit, 1, configSplit.Length - 1);
                                 break;
                             case "-DIRECTORY":
                                 directory = string.Join("=", configSplit, 1, configSplit.Length - 1);
@@ -748,7 +755,7 @@ namespace KCBackup
                                 break;
                         }
                         line = file.ReadLine();
-                        if(line == null)
+                        if (line == null)
                         {
                             break;
                         }
@@ -756,7 +763,7 @@ namespace KCBackup
                     switch (type)
                     {
                         case "userfiles":
-                            switch(name)
+                            switch (name)
                             {
                                 case "Documents":
                                     chkDocuments.Enabled = true;
@@ -867,7 +874,7 @@ namespace KCBackup
          */
         private void setCheckBoxState(bool state)
         {
-            
+
             chkVideos.Enabled = state;
             chkThunderbird.Enabled = state;
             chkPictures.Enabled = state;
@@ -911,25 +918,25 @@ namespace KCBackup
         {
             bool restoreOnly = false;
             string backupFolder = null;
-            if(File.Exists(Path.Combine(".", indicatorFile)))
+            if (File.Exists(Path.Combine(".", indicatorFile)))
             {
                 string[] arrLine = File.ReadAllLines(Path.Combine(".", indicatorFile));
-                for(int i = 0; i < arrLine.Length; i++)
+                for (int i = 0; i < arrLine.Length; i++)
                 {
                     string[] splitLine = arrLine[i].Split('=');
-                    if(splitLine[0] == "RESTOREONLY")
+                    if (splitLine[0] == "RESTOREONLY")
                     {
-                        if(splitLine[1] == "TRUE")
+                        if (splitLine[1] == "TRUE")
                         {
                             restoreOnly = true;
                         }
                     }
-                    else if(splitLine[0] == "RESTOREONLYFOLDER")
+                    else if (splitLine[0] == "RESTOREONLYFOLDER")
                     {
                         backupFolder = splitLine[1];
                     }
                 }
-                if(restoreOnly && !(backupFolder == null))
+                if (restoreOnly && !(backupFolder == null))
                 {
                     //Change the mode label
                     lblMode.Text = "RESTORE";
